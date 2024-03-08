@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 import dotenv from 'dotenv'
 import { Client } from "@notionhq/client"
+import { animeProperties } from "./properties.js";
 
 dotenv.config({ path: './.env' });
 
@@ -45,8 +46,31 @@ async function addPageToDatabase(databaseId, pageProperties) {
     parent: {
       database_id: databaseId,
     },
+    icon: { emoji: '🍥' },
     properties: pageProperties,
+    children: [
+      {
+        embed: {
+          url: "https://assets-prd.ignimgs.com/2022/08/17/top25animecharacters-blogroll-1660777571580.jpg"
+        }
+      },
+    ]
   })
 }
 
-fetchTitle();
+async function main() {
+  for (let i = 0; i < animeProperties.length; i++) {
+    await addPageToDatabase(databaseId, animeProperties[i]);
+  }
+}
+
+async function testfunc() {
+  const pageId = '73b33f53f3a545c49d0aa4ac9d926672';
+  const response = await notion.pages.retrieve({ page_id: pageId });
+  console.log(response);
+}
+
+// testfunc()
+main()
+
+// fetchTitle();
