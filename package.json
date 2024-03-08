@@ -1,0 +1,26 @@
+{
+  "type": "module",
+  "name": "notion_anime_adder",
+  "version": "1.0.0",
+  "description": "add anime to your notion database",
+  "main": "testfetch.js",
+  "scripts": {
+    "start": "node testfetch.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HardRockLogic/notion_anime_adder.git"
+  },
+  "author": "Yaroslav Chevevatiuk",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HardRockLogic/notion_anime_adder/issues"
+  },
+  "homepage": "https://github.com/HardRockLogic/notion_anime_adder#readme",
+  "dependencies": {
+    "@notionhq/client": "^2.2.14",
+    "dotenv": "^16.4.5",
+    "node-fetch": "^3.3.2"
+  }
+}
