@@ -11,13 +11,16 @@ const apiKey = process.env.NOTION_API_KEY;
 
 const notion = new Client({ auth: apiKey });
 
-async function fetchTitle() {
+async function fetchTitle(titleName) {
   const headers = new Headers();
   headers.append("X-MAL-CLIENT-ID", malClientID);
 
+  let query = titleName;
+  let limit = "1";
+
   try {
     const response = await fetch(
-      "https://api.myanimelist.net/v2/anime?q=frieren&limit=2",
+      `https://api.myanimelist.net/v2/anime?q=${query}&limit=${limit}`,
       {
         method: "GET",
         headers: headers,
@@ -28,20 +31,22 @@ async function fetchTitle() {
       throw new Error("Net response was not ok");
     }
 
-    const restDdata = await response.json();
-    const data = restDdata.data;
+    const respData = await response.json();
+    const data = respData.data;
 
     console.log(data);
 
-    data.forEach(item => {
-      console.log(item.node.title);
-    });
+    return [data[0].node.title, data[0].node.main_picture.large]
+
+    // data.forEach(item => {
+    //   console.log(item.node.title);
+    // });
   } catch (error) {
     console.error("Error fetching: ", error);
   }
 }
 
-async function addPageToDatabase(databaseId, pageProperties) {
+async function addPageToDatabase(databaseId, pageProperties, titleCoverUrl) {
   const newPage = await notion.pages.create({
     parent: {
       database_id: databaseId,
@@ -51,7 +56,7 @@ async function addPageToDatabase(databaseId, pageProperties) {
     children: [
       {
         embed: {
-          url: "https://assets-prd.ignimgs.com/2022/08/17/top25animecharacters-blogroll-1660777571580.jpg"
+          url: titleCoverUrl
         }
       },
     ]
@@ -59,18 +64,24 @@ async function addPageToDatabase(databaseId, pageProperties) {
 }
 
 async function main() {
+  const [matchedName, imageUrl] = await fetchTitle("Solo-Leveling");
+
+  // const titleCoverUrl = "https://assets-prd.ignimgs.com/2022/08/17/top25animecharacters-blogroll-1660777571580.jpg";
+
+  animeProperties[0].Name.title[0].text.content = matchedName;
+
+
   for (let i = 0; i < animeProperties.length; i++) {
-    await addPageToDatabase(databaseId, animeProperties[i]);
+    await addPageToDatabase(databaseId, animeProperties[i], imageUrl);
   }
 }
 
-async function testfunc() {
-  const pageId = '73b33f53f3a545c49d0aa4ac9d926672';
-  const response = await notion.pages.retrieve({ page_id: pageId });
-  console.log(response);
-}
+// async function testfunc() {
+//   const pageId = '#';
+//   const response = await notion.pages.retrieve({ page_id: pageId });
+//   console.log(response);
+// }
 
 // testfunc()
 main()
 
-// fetchTitle();
