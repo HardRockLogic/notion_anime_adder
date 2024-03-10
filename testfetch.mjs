@@ -11,16 +11,13 @@ const apiKey = process.env.NOTION_API_KEY;
 
 const notion = new Client({ auth: apiKey });
 
-async function fetchTitle(titleName) {
+async function fetchTitle(titleName, limit) {
   const headers = new Headers();
   headers.append("X-MAL-CLIENT-ID", malClientID);
 
-  let query = titleName;
-  let limit = "1";
-
   try {
     const response = await fetch(
-      `https://api.myanimelist.net/v2/anime?q=${query}&limit=${limit}`,
+      `https://api.myanimelist.net/v2/anime?q=${titleName}&limit=${limit}`,
       {
         method: "GET",
         headers: headers,
@@ -64,7 +61,7 @@ async function addPageToDatabase(databaseId, pageProperties, titleCoverUrl) {
 }
 
 async function main() {
-  const [matchedName, imageUrl] = await fetchTitle("Solo-Leveling");
+  const [matchedName, imageUrl] = await fetchTitle("Solo-Leveling", "1");
 
   // const titleCoverUrl = "https://assets-prd.ignimgs.com/2022/08/17/top25animecharacters-blogroll-1660777571580.jpg";
 
@@ -84,4 +81,3 @@ async function main() {
 
 // testfunc()
 main()
-
