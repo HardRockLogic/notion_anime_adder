@@ -1,9 +1,9 @@
 import fetch from "node-fetch";
-import dotenv from 'dotenv'
-import { Client } from "@notionhq/client"
+import dotenv from "dotenv";
+import { Client } from "@notionhq/client";
 import { animeProperties } from "./properties.js";
 
-dotenv.config({ path: './.env' });
+dotenv.config({ path: "./.env" });
 
 const malClientID = process.env.MAL_CLIENT_ID;
 const databaseId = process.env.TABLE_ID;
@@ -33,7 +33,7 @@ async function fetchTitle(titleName, limit) {
 
     console.log(data);
 
-    return [data[0].node.title, data[0].node.main_picture.large]
+    return [data[0].node.title, data[0].node.main_picture.large];
 
     // data.forEach(item => {
     //   console.log(item.node.title);
@@ -48,25 +48,22 @@ async function addPageToDatabase(databaseId, pageProperties, titleCoverUrl) {
     parent: {
       database_id: databaseId,
     },
-    icon: { emoji: '🍥' },
+    icon: { emoji: "🍥" },
     properties: pageProperties,
     children: [
       {
         embed: {
-          url: titleCoverUrl
-        }
+          url: titleCoverUrl,
+        },
       },
-    ]
-  })
+    ],
+  });
 }
 
 async function main() {
   const [matchedName, imageUrl] = await fetchTitle("Solo-Leveling", "1");
 
-  // const titleCoverUrl = "https://assets-prd.ignimgs.com/2022/08/17/top25animecharacters-blogroll-1660777571580.jpg";
-
   animeProperties[0].Name.title[0].text.content = matchedName;
-
 
   for (let i = 0; i < animeProperties.length; i++) {
     await addPageToDatabase(databaseId, animeProperties[i], imageUrl);
@@ -80,4 +77,4 @@ async function main() {
 // }
 
 // testfunc()
-main()
+main();
