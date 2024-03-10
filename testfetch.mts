@@ -11,9 +11,34 @@ const apiKey = process.env.NOTION_API_KEY;
 
 const notion = new Client({ auth: apiKey });
 
-async function fetchTitle(titleName, limit) {
+interface Node {
+  node: {
+    id: number;
+    title: string;
+    main_picture: {
+      medium: string;
+      large: string;
+    };
+  };
+}
+
+interface Data {
+  data: Node[];
+}
+
+interface TitleMetaData {
+  title: string;
+  coverUrl: string;
+}
+
+async function fetchTitle(
+  titleName: string,
+  limit: string,
+): Promise<TitleMetaData | undefined> {
   const headers = new Headers();
-  headers.append("X-MAL-CLIENT-ID", malClientID);
+  if (malClientID !== undefined) {
+    headers.append("X-MAL-CLIENT-ID", malClientID);
+  }
 
   try {
     const response = await fetch(
@@ -28,22 +53,26 @@ async function fetchTitle(titleName, limit) {
       throw new Error("Net response was not ok");
     }
 
-    const respData = await response.json();
+    const respData = (await response.json()) as Data;
     const data = respData.data;
 
     console.log(data);
 
-    return [data[0].node.title, data[0].node.main_picture.large];
-
-    // data.forEach(item => {
-    //   console.log(item.node.title);
-    // });
+    // return [data[0].node.title, data[0].node.main_picture.large];
+    return {
+      title: data[0].node.title,
+      coverUrl: data[0].node.main_picture.large,
+    };
   } catch (error) {
     console.error("Error fetching: ", error);
   }
 }
 
-async function addPageToDatabase(databaseId, pageProperties, titleCoverUrl) {
+async function addPageToDatabase(
+  databaseId: string,
+  pageProperties: any,
+  titleCoverUrl: string,
+) {
   const newPage = await notion.pages.create({
     parent: {
       database_id: databaseId,
@@ -61,12 +90,16 @@ async function addPageToDatabase(databaseId, pageProperties, titleCoverUrl) {
 }
 
 async function main() {
-  const [matchedName, imageUrl] = await fetchTitle("Solo-Leveling", "1");
+  const matched = await fetchTitle("My-Hero-Academy", "1")!;
 
-  animeProperties[0].Name.title[0].text.content = matchedName;
+  animeProperties[0].Name.title[0].text.content = matched?.title!;
 
   for (let i = 0; i < animeProperties.length; i++) {
-    await addPageToDatabase(databaseId, animeProperties[i], imageUrl);
+    await addPageToDatabase(
+      databaseId!,
+      animeProperties[i],
+      matched?.coverUrl!,
+    );
   }
 }
 
