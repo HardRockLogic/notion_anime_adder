@@ -2,7 +2,7 @@
   "name": "notion_anime_adder",
   "version": "1.0.0",
   "description": "add anime to your notion database",
-  "main": "testfetch.js",
+  "main": "testfetch.ts",
   "scripts": {
     "start": "node dist/testfetch.js",
     "dev": "ts-node testfetch.mts"
@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/HardRockLogic/notion_anime_adder.git"
   },
-  "author": "Yaroslav Chevevatiuk",
+  "author": "Yaroslav Cherevatiuk",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/HardRockLogic/notion_anime_adder/issues"

@@ -34,7 +34,7 @@ interface TitleMetaData {
 async function fetchTitle(
   titleName: string,
   limit: string,
-): Promise<TitleMetaData | undefined> {
+): Promise<TitleMetaData> {
   const headers = new Headers();
   if (malClientID !== undefined) {
     headers.append("X-MAL-CLIENT-ID", malClientID);
@@ -58,13 +58,13 @@ async function fetchTitle(
 
     console.log(data);
 
-    // return [data[0].node.title, data[0].node.main_picture.large];
     return {
       title: data[0].node.title,
       coverUrl: data[0].node.main_picture.large,
     };
   } catch (error) {
     console.error("Error fetching: ", error);
+    process.exit(1);
   }
 }
 
@@ -92,22 +92,16 @@ async function addPageToDatabase(
 async function main() {
   const matched = await fetchTitle("My-Hero-Academy", "1")!;
 
-  animeProperties[0].Name.title[0].text.content = matched?.title!;
+  animeProperties[0].Name.title[0].text.content = matched.title;
 
   for (let i = 0; i < animeProperties.length; i++) {
-    await addPageToDatabase(
-      databaseId!,
-      animeProperties[i],
-      matched?.coverUrl!,
-    );
+    await addPageToDatabase(databaseId!, animeProperties[i], matched.coverUrl);
   }
 }
 
-// async function testfunc() {
-//   const pageId = '#';
-//   const response = await notion.pages.retrieve({ page_id: pageId });
-//   console.log(response);
-// }
+async function getPageData(pageId: string) {
+  const response = await notion.pages.retrieve({ page_id: pageId });
+  console.log(response);
+}
 
-// testfunc()
 main();
