@@ -89,8 +89,8 @@ async function addPageToDatabase(
   });
 }
 
-async function main() {
-  const matched = await fetchTitle("My-Hero-Academy", "1")!;
+export async function mainWrapper(titleName: string) {
+  const matched = await fetchTitle(titleName, "1");
 
   animeProperties[0].Name.title[0].text.content = matched.title;
 
@@ -103,5 +103,3 @@ async function getPageData(pageId: string) {
   const response = await notion.pages.retrieve({ page_id: pageId });
   console.log(response);
 }
-
-main();
